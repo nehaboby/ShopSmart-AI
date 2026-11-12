@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Orders | ShopSmart AI{% endblock %}
+
+{% block content %}
+
+<section class="orders-page">
+
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">YOUR PURCHASE HISTORY</span>
+            <h1>My Orders</h1>
+            <p>Track and review your previous purchases.</p>
+        </div>
+
+        <a href="{{ url_for('main.products') }}" class="primary-button">
+            Continue Shopping
+        </a>
+    </div>
+
+    {% if orders %}
+
+        <div class="orders-list">
+
+            {% for order in orders %}
+
+                <article class="order-card">
+
+                    <div class="order-header">
+
+                        <div>
+                            <span class="order-label">ORDER NUMBER</span>
+                            <h3>#{{ order.id }}</h3>
+                        </div>
+
+                        <div class="order-status
+                            {% if order.status|lower == 'completed' %}
+                                status-completed
+                            {% elif order.status|lower == 'cancelled' %}
+                                status-cancelled
+                            {% else %}
+                                status-pending
+                            {% endif %}">
+                            {{ order.status }}
+                        </div>
+
+                    </div>
+
+                    <div class="order-details">
+
+                        <div class="order-detail-item">
+                            <span>Order Date</span>
+                            <strong>
+                                {{ order.created_at.strftime('%d %b %Y') if order.created_at else 'N/A' }}
+                            </strong>
+                        </div>
+
+                        <div class="order-detail-item">
+                            <span>Total Amount</span>
+                            <strong>
+                                ₹{{ "%.2f"|format(order.total_amount) }}
+                            </strong>
+                        </div>
+
+                        <div class="order-detail-item">
+                            <span>Items</span>
+                            <strong>{{ order.items|length }}</strong>
+                        </div>
+
+                    </div>
+
+                    {% if order.items %}
+
+                        <div class="order-products">
+
+                            <h4>Products in this Order</h4>
+
+                            {% for item in order.items %}
+
+                                <div class="order-product-item">
+
+                                    <div>
+                                        <strong>
+                                            {{ item.product.name if item.product else 'Product unavailable' }}
+                                        </strong>
+
+                                        <span>
+                                            Quantity: {{ item.quantity }}
+                                        </span>
+                                    </div>
+
+                                    <strong>
+                                        ₹{{ "%.2f"|format(item.price * item.quantity) }}
+                                    </strong>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-cart-icon">📦</div>
+
+            <h2>No Orders Yet</h2>
+
+            <p>Your order history will appear here after your first purchase.</p>
+
+            <a href="{{ url_for('main.products') }}" class="primary-button">
+                Explore Products
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

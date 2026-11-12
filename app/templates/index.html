@@ -1,0 +1,338 @@
+
+{% extends "base.html" %}
+
+{% block title %}ShopSmart AI | Smart Shopping Starts Here{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+
+    <div class="hero-content">
+        <span class="hero-tag">✨ THE FUTURE OF ONLINE SHOPPING</span>
+
+        <h1>
+            Shop Smarter.<br>
+            Live Better.
+        </h1>
+
+        <p>
+            Discover amazing products with intelligent recommendations,
+            AI-powered shopping assistance and a seamless shopping experience.
+        </p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('main.products') }}" class="btn btn-primary">
+                Explore Products →
+            </a>
+
+            <a href="#recommendations" class="btn btn-outline">
+                Discover Recommendations
+            </a>
+        </div>
+
+        <div class="hero-stats">
+            <div>
+                <strong>AI</strong>
+                <span>Smart Shopping</span>
+            </div>
+
+            <div>
+                <strong>24/7</strong>
+                <span>Shopping Assistant</span>
+            </div>
+
+            <div>
+                <strong>100%</strong>
+                <span>Convenience</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <div class="hero-circle">
+            <div class="hero-shopping-card">
+                <span class="hero-emoji">🛍️</span>
+                <h3>Smart Shopping</h3>
+                <p>Powered by AI</p>
+            </div>
+
+            <div class="floating-card floating-one">
+                ✨ Personalized Picks
+            </div>
+
+            <div class="floating-card floating-two">
+                🤖 AI Assistant
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- Categories -->
+
+<section class="section">
+
+    <div class="section-heading">
+        <div>
+            <span class="section-tag">EXPLORE</span>
+            <h2>Shop by Category</h2>
+            <p>Find exactly what you're looking for.</p>
+        </div>
+    </div>
+
+    <div class="category-grid">
+
+        {% if categories %}
+
+            {% for category in categories %}
+
+                <a href="{{ url_for('main.products', category=category) }}"
+                   class="category-card">
+
+                    <span class="category-icon">🛒</span>
+                    <h3>{{ category }}</h3>
+                    <span>Explore Category →</span>
+
+                </a>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="empty-message">
+                Categories will appear here once products are added.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+
+<!-- Latest Products -->
+
+<section class="section">
+
+    <div class="section-heading">
+        <div>
+            <span class="section-tag">LATEST COLLECTION</span>
+            <h2>Featured Products</h2>
+            <p>Explore our latest products and discoveries.</p>
+        </div>
+
+        <a href="{{ url_for('main.products') }}" class="text-link">
+            View All Products →
+        </a>
+    </div>
+
+    <div class="product-grid">
+
+        {% for product in products %}
+
+            <div class="product-card">
+
+                <a href="{{ url_for('main.product_detail', product_id=product.id) }}"
+                   class="product-image">
+
+                    {% if product.image_url %}
+                        <img src="{{ product.image_url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+                    {% else %}
+                        <div class="product-placeholder">🛍️</div>
+                    {% endif %}
+
+                </a>
+
+                <div class="product-info">
+
+                    <span class="product-category">
+                        {{ product.category }}
+                    </span>
+
+                    <h3>
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+                    </h3>
+
+                    <p class="product-description">
+                        {{ product.description[:90] }}
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <strong class="product-price">
+                            ₹{{ "%.2f"|format(product.price) }}
+                        </strong>
+
+                        <form action="{{ url_for('main.add_to_cart', product_id=product.id) }}"
+                              method="POST">
+
+                            <button type="submit" class="add-cart-btn">
+                                Add +
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <p class="empty-message">
+                No products available yet. Please check back soon.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- AI Recommendations -->
+
+<section class="section recommendation-section" id="recommendations">
+
+    <div class="section-heading">
+        <div>
+            <span class="section-tag">POWERED BY ARTIFICIAL INTELLIGENCE</span>
+            <h2>Recommended for You</h2>
+            <p>Discover products selected through our smart recommendation system.</p>
+        </div>
+    </div>
+
+    <div class="product-grid">
+
+        {% for product in recommendations %}
+
+            <div class="product-card">
+
+                <a href="{{ url_for('main.product_detail', product_id=product.id) }}"
+                   class="product-image">
+
+                    {% if product.image_url %}
+                        <img src="{{ product.image_url }}"
+                             alt="{{ product.name }}"
+                             loading="lazy">
+                    {% else %}
+                        <div class="product-placeholder">✨</div>
+                    {% endif %}
+
+                </a>
+
+                <div class="product-info">
+
+                    <span class="product-category">
+                        {{ product.category }}
+                    </span>
+
+                    <h3>
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
+                            {{ product.name }}
+                        </a>
+                    </h3>
+
+                    <div class="product-bottom">
+
+                        <strong class="product-price">
+                            ₹{{ "%.2f"|format(product.price) }}
+                        </strong>
+
+                        <a href="{{ url_for('main.product_detail', product_id=product.id) }}"
+                           class="add-cart-btn">
+                            View
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <p class="empty-message">
+                Recommendations will appear once products are available.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- AI Shopping Assistant -->
+
+<section class="ai-promo-section">
+
+    <div>
+        <span class="section-tag">YOUR PERSONAL SHOPPING ASSISTANT</span>
+
+        <h2>Need help finding the perfect product?</h2>
+
+        <p>
+            Chat with ShopSmart AI to discover products,
+            explore categories and get shopping suggestions.
+        </p>
+    </div>
+
+    <button type="button"
+            class="btn btn-primary"
+            onclick="openChatbot()">
+        Chat with AI 🤖
+    </button>
+
+</section>
+
+
+<!-- Chatbot -->
+
+<div class="chatbot-widget" id="chatbot">
+
+    <div class="chatbot-header">
+
+        <div>
+            <strong>ShopSmart AI</strong>
+            <span>● Online shopping assistant</span>
+        </div>
+
+        <button type="button"
+                onclick="closeChatbot()"
+                aria-label="Close chatbot">
+            ×
+        </button>
+
+    </div>
+
+    <div class="chatbot-messages" id="chatMessages">
+
+        <div class="bot-message">
+            Hello! 👋 Welcome to ShopSmart AI.
+            How can I help you shop today?
+        </div>
+
+    </div>
+
+    <form id="chatForm" class="chatbot-input">
+
+        <input type="text"
+               id="chatInput"
+               placeholder="Ask me anything..."
+               maxlength="1000"
+               required>
+
+        <button type="submit">Send</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

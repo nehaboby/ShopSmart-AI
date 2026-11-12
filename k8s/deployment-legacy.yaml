@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopsmart-ai
+  labels:
+    app: shopsmart-ai
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shopsmart-ai
+  template:
+    metadata:
+      labels:
+        app: shopsmart-ai
+    spec:
+      containers:
+        - name: shopsmart-ai
+          image: YOUR_ACR_NAME.azurecr.io/shopsmart-ai:v1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: shopsmart-secrets
+                  key: secret-key
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

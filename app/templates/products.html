@@ -1,0 +1,165 @@
+
+{% extends "base.html" %}
+
+{% block title %}All Products | ShopSmart AI{% endblock %}
+
+{% block content %}
+
+<section class="products-page">
+
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">OUR COLLECTION</span>
+            <h1>Explore All Products</h1>
+            <p>Find exactly what you are looking for with ShopSmart AI.</p>
+        </div>
+    </div>
+
+    <!-- Search and Category Filter -->
+    <form method="GET" action="{{ url_for('main.products') }}"
+          class="product-filter-form">
+
+        <div class="search-box">
+            <input
+                type="text"
+                name="q"
+                placeholder="Search products..."
+                value="{{ q or '' }}"
+            >
+        </div>
+
+        <div class="category-filter">
+            <select name="category">
+                <option value="">All Categories</option>
+
+                {% for cat in categories %}
+                    <option value="{{ cat }}"
+                        {% if category == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="primary-button">
+            Search Products
+        </button>
+
+        <a href="{{ url_for('main.products') }}" class="secondary-button">
+            Clear Filters
+        </a>
+
+    </form>
+
+    <!-- Product Results -->
+    <div class="products-results-heading">
+        <h2>Available Products</h2>
+        <span>{{ products|length }} products found</span>
+    </div>
+
+    {% if products %}
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+                <article class="product-card">
+
+                    <a href="{{ url_for('main.product_detail', product_id=product.id) }}"
+                       class="product-image-link">
+
+                        {% if product.image_url %}
+                            <img
+                                src="{{ product.image_url }}"
+                                alt="{{ product.name }}"
+                                class="product-image"
+                            >
+                        {% else %}
+                            <div class="product-image-placeholder">
+                                <span>ShopSmart AI</span>
+                            </div>
+                        {% endif %}
+
+                    </a>
+
+                    <div class="product-info">
+
+                        <span class="product-category">
+                            {{ product.category }}
+                        </span>
+
+                        <h3>
+                            <a href="{{ url_for('main.product_detail', product_id=product.id) }}">
+                                {{ product.name }}
+                            </a>
+                        </h3>
+
+                        <p class="product-description">
+                            {{ product.description|truncate(110) }}
+                        </p>
+
+                        <div class="product-card-bottom">
+
+                            <span class="product-price">
+                                ₹{{ "%.2f"|format(product.price) }}
+                            </span>
+
+                            <span class="stock-status">
+                                {% if product.stock > 0 %}
+                                    In Stock
+                                {% else %}
+                                    Out of Stock
+                                {% endif %}
+                            </span>
+
+                        </div>
+
+                        <div class="product-actions">
+
+                            <a
+                                href="{{ url_for('main.product_detail', product_id=product.id) }}"
+                                class="secondary-button">
+                                View Details
+                            </a>
+
+                            {% if product.stock > 0 %}
+                                <form method="POST"
+                                      action="{{ url_for('main.add_to_cart', product_id=product.id) }}">
+
+                                    <button type="submit" class="primary-button">
+                                        Add to Cart
+                                    </button>
+
+                                </form>
+                            {% else %}
+                                <button class="primary-button" disabled>
+                                    Unavailable
+                                </button>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+            <h2>No Products Found</h2>
+            <p>Try changing your search term or selecting another category.</p>
+
+            <a href="{{ url_for('main.products') }}" class="primary-button">
+                View All Products
+            </a>
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

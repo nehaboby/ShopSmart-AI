@@ -1,0 +1,145 @@
+
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart | ShopSmart AI{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">YOUR SHOPPING BAG</span>
+            <h1>Shopping Cart</h1>
+            <p>Review your selected products before checkout.</p>
+        </div>
+    </div>
+
+    {% if cart_items %}
+
+        <div class="cart-layout">
+
+            <!-- Cart Products -->
+            <div class="cart-items-container">
+
+                {% for item in cart_items %}
+
+                    <div class="cart-item">
+
+                        <div class="cart-item-image">
+
+                            {% if item.product.image_url %}
+                                <img
+                                    src="{{ item.product.image_url }}"
+                                    alt="{{ item.product.name }}"
+                                >
+                            {% else %}
+                                <div class="product-image-placeholder">
+                                    ShopSmart AI
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="cart-item-details">
+
+                            <span class="product-category">
+                                {{ item.product.category }}
+                            </span>
+
+                            <h3>{{ item.product.name }}</h3>
+
+                            <p class="cart-item-price">
+                                ₹{{ "%.2f"|format(item.product.price) }}
+                                each
+                            </p>
+
+                            <p class="cart-item-quantity">
+                                Quantity: {{ item.quantity }}
+                            </p>
+
+                            <p class="cart-item-subtotal">
+                                Subtotal:
+                                <strong>
+                                    ₹{{ "%.2f"|format(item.subtotal) }}
+                                </strong>
+                            </p>
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('main.remove_from_cart', product_id=item.product.id) }}"
+                            >
+                                <button type="submit" class="remove-cart-button">
+                                    Remove
+                                </button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <!-- Order Summary -->
+            <aside class="cart-summary">
+
+                <h2>Order Summary</h2>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹{{ "%.2f"|format(subtotal) }}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span class="free-shipping">FREE</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <strong>₹{{ "%.2f"|format(total) }}</strong>
+                </div>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('main.checkout') }}"
+                >
+                    <button type="submit" class="primary-button checkout-button">
+                        Proceed to Checkout
+                    </button>
+                </form>
+
+                <a href="{{ url_for('main.products') }}"
+                   class="continue-shopping">
+                    ← Continue Shopping
+                </a>
+
+            </aside>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <div class="empty-cart-icon">🛒</div>
+
+            <h2>Your Cart is Empty</h2>
+
+            <p>You haven't added any products to your shopping cart yet.</p>
+
+            <a href="{{ url_for('main.products') }}" class="primary-button">
+                Start Shopping
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}
